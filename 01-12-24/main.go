@@ -54,24 +54,19 @@ func main() {
 	slices.Sort(leftList)
 	slices.Sort(rightList)
 
-	absoluteDistance, err := totalDistance(leftList, rightList)
-	if err != nil {
-		fmt.Println("Error calculating absolute distance between slice items:", err)
-		return
-	}
-
+	// Get answers
+	absoluteDistance := calculateTotalDistance(leftList, rightList)
 	fmt.Println("Absolute distance: ", absoluteDistance)
+
+	similarityScore := calculateSimilarityScore(leftList, rightList)
+	fmt.Println("Similarity score: ", similarityScore) 
 }
 
 // Calculate the absolute difference between each slice element
-func totalDistance(leftList []int, rightList []int) (int, error){
+func calculateTotalDistance(leftList, rightList []int) int {
 	var absoluteDistance int = 0
 
-	if len(leftList) != len(rightList) {
-		err := fmt.Errorf("Slices are not of equal lenght")
-		return 0, err
-	}
-
+	// Calculate absolute difference between values
 	for i := 0; i < len(leftList); i++ {
 		if leftList[i] < rightList[i] {
 			absoluteDistance = absoluteDistance + (rightList[i] - leftList[i])
@@ -79,5 +74,22 @@ func totalDistance(leftList []int, rightList []int) (int, error){
 			absoluteDistance = absoluteDistance + (leftList[i] - rightList[i])
 		}	
 	}
-	return absoluteDistance, nil
+	return absoluteDistance
+}
+
+func calculateSimilarityScore(leftList, rightList []int) int {
+	// Create a map to store the frequency of number occurrences in the right slice
+	rightFrequency := make(map[int]int)
+	for _, num := range rightList {
+		rightFrequency[num]++
+	}
+
+	// Calculate similarity score
+	score := 0
+	for _, num := range leftList {
+		if frequency, exists := rightFrequency[num]; exists {
+			score += num * frequency
+		}
+	}
+	return score
 }
